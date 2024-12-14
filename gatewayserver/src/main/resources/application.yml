@@ -9,7 +9,8 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
+          enabled: false
+          lowerCaseServiceId: true   # this line makes microservices APIs access in lowercase
 
 
 management:
