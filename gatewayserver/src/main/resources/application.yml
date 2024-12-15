@@ -9,7 +9,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: false # this line make access of all microservices only from API Gateway Server {it disable locate microservices from eureka to make them unaccessable directly}
           lowerCaseServiceId: true   # this line makes microservices APIs access in lowercase
 
 
@@ -31,4 +31,8 @@ info:
     description: "Eazy Bank Gateway server application"
     version: "1.0.0"
 
-
+logging:
+  level:
+    com:
+      eazybytes:
+        gatewayserver: DEBUG
