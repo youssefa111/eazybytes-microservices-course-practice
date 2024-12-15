@@ -9,7 +9,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false # this line make access of all microservices only from API Gateway Server {it disable locate microservices from eureka to make them unaccessable directly}
+          enabled: false # This setting will stop the gateway from automatically discovering routes based on the services registered with the service registry. we use this false when we make the apis of microservices in LowerCase so we need to prevent the call of UpperCase
           lowerCaseServiceId: true   # this line makes microservices APIs access in lowercase
 
 
