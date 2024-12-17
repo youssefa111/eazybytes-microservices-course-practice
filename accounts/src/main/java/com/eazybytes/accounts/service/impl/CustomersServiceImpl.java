@@ -44,10 +44,16 @@ public class CustomersServiceImpl implements ICustomersService {
         customerDetailsDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
 
         ResponseEntity<LoansDto> loansDtoResponseEntity = loansFeignClient.fetchLoanDetails(mobileNumber);
-        customerDetailsDto.setLoansDto(loansDtoResponseEntity.getBody());
+        if (loansDtoResponseEntity != null) {
+            customerDetailsDto.setLoansDto(loansDtoResponseEntity.getBody());
+        }
 
         ResponseEntity<CardsDto> cardsDtoResponseEntity = cardsFeignClient.fetchCardDetails(mobileNumber);
-        customerDetailsDto.setCardsDto(cardsDtoResponseEntity.getBody());
+//        cardsDtoResponseEntity.getStatusCode().is2xxSuccessful()  -> this check status code if in 200 codes then its success
+        if (cardsDtoResponseEntity != null) {
+            customerDetailsDto.setCardsDto(cardsDtoResponseEntity.getBody());
+        }
+
 
         return customerDetailsDto;
 
