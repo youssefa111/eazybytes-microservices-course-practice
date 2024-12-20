@@ -9,6 +9,9 @@ spring:
         locator:
           enabled: false # This setting will stop the gateway from automatically discovering routes based on the services registered with the service registry. we use this false when we make the apis of microservices in LowerCase so we need to prevent the call of UpperCase
           lowerCaseServiceId: true   # this line makes microservices APIs access in lowercase
+      httpclient:
+        connect-timeout: 10000   # this responsible for the max duration of gateway server try to connect to microservice
+        response-timeout: 30s    # this responsible for the max duration of response of the microservice return to gateway server to return to the client
 
 
 management:
