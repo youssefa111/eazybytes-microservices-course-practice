@@ -73,7 +73,7 @@ logging:
       eazybytes:
         accounts: DEBUG
 
-
+# Add Circuit Breaker Pattern to Account Microservice with Resilience4j
 resilience4j.circuitbreaker:
   configs:
     default:
@@ -82,7 +82,7 @@ resilience4j.circuitbreaker:
       failureRateThreshold: 50
       waitDurationInOpenState: 10000
 
-
+# Add Retry Pattern to Account Microservice with Resilience4j
 resilience4j.retry:
   configs:
     default:
@@ -94,3 +94,12 @@ resilience4j.retry:
         - java.lang.NullPointerException
       retry-exceptions:  # this specifies only exceptions when occurred then retry and when we use it then no need of ignore-exceptions
         - java.util.concurrent.TimeoutException
+
+
+# Add Rate Limiter Pattern to Account Microservice with Resilience4j
+resilience4j.ratelimiter:
+  configs:
+    default:
+      timeoutDuration: 1000
+      limitRefreshPeriod: 5000
+      limitForPeriod: 1
