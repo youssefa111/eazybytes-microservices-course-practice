@@ -42,7 +42,7 @@ public class GatewayserverApplication {
 								// Here we add CircuitBreaker to Accounts microservice
 								.circuitBreaker(config -> config.setName("AccountCircuitBreaker").setFallbackUri("forward:/contact-support"))
 						)
-						.uri("lb://ACCOUNT"))
+						.uri("lb://ACCOUNTS"))
 
 				.route(p -> p
 						.path("/eazybank/loans/**")
