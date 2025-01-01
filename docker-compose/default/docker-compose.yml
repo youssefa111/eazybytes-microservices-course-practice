@@ -15,6 +15,18 @@ services:
 #      file: common-config.yml
 #      service: network-deploy-service
 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      timeout: 10s
+      retries: 10
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
   accountsDB:
     image: mysql
     container_name: accountsDB
@@ -49,7 +61,7 @@ services:
       MYSQL_DATABASE: loansDB
 
   configserver:
-    image: "eazybytes/configserver:s9"
+    image: "eazybytes/configserver:s10"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -68,13 +80,10 @@ services:
 
 
   eurekaserver:
-    image: "eazybytes/eurekaserver:s9"
+    image: "eazybytes/eurekaserver:s10"
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
-    #    depends_on:
-    #      rabbit:
-    #        condition: service_healthy
     healthcheck:
       test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
       interval: 10s
@@ -91,7 +100,7 @@ services:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
   accounts:
-    image: "eazybytes/accounts:s9"
+    image: "eazybytes/accounts:s10"
     container_name: accounts-ms
     ports:
       - "8080:8080"
@@ -116,7 +125,7 @@ services:
       service: microservice-config
 
   loans:
-    image: "eazybytes/loans:s9"
+    image: "eazybytes/loans:s10"
     container_name: loans-ms
     ports:
       - "8090:8090"
@@ -141,7 +150,7 @@ services:
       service: microservice-config
 
   cards:
-    image: "eazybytes/cards:s9"
+    image: "eazybytes/cards:s10"
     container_name: cards-ms
     ports:
       - "9000:9000"
@@ -166,7 +175,7 @@ services:
       service: microservice-config
 
   gatewayserver:
-    image: "eazybytes/gatewayserver:s9"
+    image: "eazybytes/gatewayserver:s10"
     container_name: gatewayserver-ms
     ports:
       - "8072:8072"
