@@ -15,7 +15,7 @@ services:
 
   microservices-db-config:
     extends:
-      service: network-deploy-service
+      service: microservice-base-config
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       interval: 10s
