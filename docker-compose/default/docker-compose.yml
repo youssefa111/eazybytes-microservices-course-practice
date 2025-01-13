@@ -16,6 +16,10 @@ services:
   #      file: common-config.yml
   #      service: network-deploy-service
 
+
+
+  # ================= Grafana Stack Logging on all microservices =====================
+
   read:
     image: grafana/loki:latest
     command: "-config.file=/etc/loki/config.yaml -target=read"
@@ -24,7 +28,7 @@ services:
       - 7946
       - 9095
     volumes:
-      - ./observability/loki/loki-config.yaml:/etc/loki/config.yaml
+      - ../observability/loki/loki-config.yaml:/etc/loki/config.yaml
     depends_on:
       - minio
     healthcheck:
@@ -45,7 +49,7 @@ services:
       - 7946
       - 9095
     volumes:
-      - ./observability/loki/loki-config.yaml:/etc/loki/config.yaml
+      - ../observability/loki/loki-config.yaml:/etc/loki/config.yaml
     healthcheck:
       test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1" ]
       interval: 10s
@@ -59,7 +63,7 @@ services:
   alloy:
     image: grafana/alloy:latest
     volumes:
-      - ./observability/alloy/alloy-local-config.yaml:/etc/alloy/config.alloy:ro
+      - ../observability/alloy/alloy-local-config.yaml:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock
     command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
     ports:
@@ -67,7 +71,7 @@ services:
     depends_on:
       - gateway
     extends:
-      file: common-file.yml
+      file: common-config.yml
       service: network-deploy-service
 
   minio:
@@ -94,7 +98,7 @@ services:
       timeout: 20s
       retries: 5
     extends:
-      file: common-file.yml
+      file: common-config.yml
       service: network-deploy-service
 
   grafana:
@@ -131,13 +135,13 @@ services:
       timeout: 5s
       retries: 5
     extends:
-      file: common-file.yml
+      file: common-config.yml
       service: network-deploy-service
 
   backend:
     image: grafana/loki:latest
     volumes:
-      - ./observability/loki/loki-config.yaml:/etc/loki/config.yaml
+      - ../observability/loki/loki-config.yaml:/etc/loki/config.yaml
     ports:
       - "3100"
       - "7946"
@@ -145,7 +149,7 @@ services:
     depends_on:
       - gateway
     extends:
-      file: common-file.yml
+      file: common-config.yml
       service: network-deploy-service
 
 
@@ -216,10 +220,14 @@ services:
       timeout: 5s
       retries: 5
     extends:
-      file: common-file.yml
+      file: common-config.yml
       service: network-deploy-service
 
 
+
+  # ===================================================
+
+# ================= Redis Caching =====================
   redis:
     image: redis
     ports:
@@ -231,6 +239,10 @@ services:
     extends:
       file: common-config.yml
       service: network-deploy-service
+
+  # ================================================================
+
+  # ================= Database Containers =====================
 
   accountsDB:
     image: mysql
@@ -265,6 +277,10 @@ services:
     environment:
       MYSQL_DATABASE: loansDB
 
+  # ================================================================
+
+  # ================= Config Server Container =====================
+
   configserver:
     image: "eazybytes/configserver:s11"
     container_name: configserver-ms
@@ -283,6 +299,9 @@ services:
       file: common-config.yml
       service: microservice-base-config
 
+  # ================================================================
+
+  # ================= Discovery Service Container =====================
 
   eurekaserver:
     image: "eazybytes/eurekaserver:s11"
@@ -304,6 +323,9 @@ services:
     environment:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
+  # ================================================================
+
+  # ================= Microservices Containers =====================
   accounts:
     image: "eazybytes/accounts:s11"
     container_name: accounts-ms
@@ -316,9 +338,7 @@ services:
       retries: 10
       start_period: 10s
     depends_on:
-      cardsDB:
-        condition: service_healthy
-      configserver:
+      accountsDB:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
@@ -343,8 +363,6 @@ services:
     depends_on:
       loansDB:
         condition: service_healthy
-      configserver:
-        condition: service_healthy
       eurekaserver:
         condition: service_healthy
     environment:
@@ -368,8 +386,6 @@ services:
     depends_on:
       cardsDB:
         condition: service_healthy
-      configserver:
-        condition: service_healthy
       eurekaserver:
         condition: service_healthy
     environment:
@@ -378,6 +394,11 @@ services:
     extends:
       file: common-config.yml
       service: microservice-config
+
+  # ================================================================
+
+  # ================= Gateway Server Container =====================
+
 
   gatewayserver:
     image: "eazybytes/gatewayserver:s11"
@@ -402,6 +423,9 @@ services:
     extends:
       file: common-config.yml
       service: microservice-eureka-config
+
+  # ================================================================
+
 
 networks:
   eazybank:
