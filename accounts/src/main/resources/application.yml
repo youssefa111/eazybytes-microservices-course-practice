@@ -76,6 +76,10 @@ logging:
     com:
       eazybytes:
         accounts: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+
 
 # Add Circuit Breaker Pattern to Account Microservice with Resilience4j
 resilience4j.circuitbreaker:
